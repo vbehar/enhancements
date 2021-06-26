@@ -46,8 +46,10 @@ The idea is to switch to the following workflow:
 - when a "gitops" Pull Request is created, the Pull Request pipeline will:
   - re-generate the kubernetes manifests from the [Helmfile](https://github.com/roboll/helmfile) state - using `helmfile template`
   - if there is a diff validate the manifests, using kubeval, kube-score, ...
-  - if everything is good, git commit/push event with a token in the commit message (this will trigger a new run of the PR pipeline which will detect the token and exit early with a success),
-  - Lighthouse can auto-merge the PR (or it can be manually approved)
+  - if everything is good, git commit/push event with a token in the commit message
+- the new git commit/push event will trigger a new run of the PR pipeline:
+  - the PR pipeline will detect the token and exit early with a success
+- Lighthouse can auto-merge the PR (or it can be manually approved)
 - and when a "gitops" Pull Request is merged, the "gitops operator" will:
   - just apply these manifests to the kubernetes cluster - using `kubectl apply`
 
