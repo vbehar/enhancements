@@ -45,12 +45,9 @@ The idea is to switch to the following workflow:
     - these PRs will "just" change the version of the application (helm chart) in a YAML file
 - when a "gitops" Pull Request is created, the Pull Request pipeline will:
   - re-generate the kubernetes manifests from the [Helmfile](https://github.com/roboll/helmfile) state - using `helmfile template`
-  - check if there is a diff between the manifests already stored in the git repo - in the `config-root` dir for example
-    - if there is a diff, we'll add/commit/push the changes, and stop the pipeline with a failure
-- the new git commit/push event will trigger a new run of the PR pipeline:
-  - it will also re-generate the manifests, but this time there won't be any diff
-  - the pipeline can proceed by validating the manifests, using kubeval, kube-score, ...
-  - if everything is good, the pipeline can finish with a success state, so that Lighthouse can auto-merge the PR (or it can be manually approved)
+  - if there is a diff validate the manifests, using kubeval, kube-score, ...
+  - if everything is good, git commit/push event with a token in the commit message (this will trigger a new run of the PR pipeline which will detect the token and exit early with a success),
+  - Lighthouse can auto-merge the PR (or it can be manually approved)
 - and when a "gitops" Pull Request is merged, the "gitops operator" will:
   - just apply these manifests to the kubernetes cluster - using `kubectl apply`
 
